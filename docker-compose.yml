@@ -102,15 +102,6 @@ services:
     environment:
       VIRTUAL_HOST: ${PROJECT_DOMAIN}
 
-  drush:
-    image: drush/drush:9
-    container_name: "${PROJECT_NAME}_drush"
-    depends_on:
-      - php
-      - mariadb
-    volumes_from:
-    - php
-
   terminus:
     image: subhaze/terminus
     container_name: "${PROJECT_NAME}_terminus"
