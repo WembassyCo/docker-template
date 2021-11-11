@@ -20,6 +20,10 @@ services:
   mariadb:
     image: wodby/mariadb:${MARIADB_TAG}
     container_name: "${PROJECT_NAME}_mariadb"
+    expose:
+      - 3306
+    ports:
+      - 3306
     stop_grace_period: 30s
     environment:
       MYSQL_USER: ${DB_USER}
@@ -44,7 +48,7 @@ services:
       CRONTAB: "0 * * * * drush -r /var/www/html/${DOCROOT} cron"
     command: sudo -E LD_PRELOAD=/usr/lib/preloadable_libiconv.so crond -f -d 0
     volumes:
-    - ${PROJECT_PATH}:/var/www/html:cached
+    - ${PROJECT_PATH}:/var/www/html
 
   apache:
    image: wodby/apache:${APACHE_TAG}
@@ -58,6 +62,8 @@ services:
    environment:
      PHP_MEMORY_LIMIT: 10G
      PHP_MAX_FILE_UPLOADS: 10G
+     PHP_MAX_FILE_UPLOADS: 10G
+     PHP_POST_MAX_SIZE: 10G
      VIRTUAL_HOST: ${APACHE_VHOST}
      APACHE_LOG_LEVEL: debug
      APACHE_BACKEND_HOST: php
@@ -68,7 +74,7 @@ services:
      DB_USER: ${DB_USER}
      DB_PASSWORD: ${DB_PASSWORD}
    volumes:
-   - ${PROJECT_PATH}:/var/www/html:cached
+   - ${PROJECT_PATH}:/var/www/html
 
   phpmyadmin:
     image: phpmyadmin
@@ -81,8 +87,11 @@ services:
     environment:
       VIRTUAL_HOST: ${PHPMYADMIN_VHOST}
       PMA_HOST: ${PROJECT_NAME}_mariadb
-      PMA_USER: ${DB_USER}
-      PMA_PASSWORD: ${DB_PASSWORD}
+      MEMORY_LIMIT: 10G
+      UPLOAD_LIMIT: 10G
+      MAX_EXECUTION_TIME: 100
+      # PMA_USER: ${DB_USER}
+      # PMA_PASSWORD: ${DB_PASSWORD}
       PMA_ARBITRARY: 1
 
   mailhog:
@@ -92,6 +101,15 @@ services:
     container_name: "${PROJECT_NAME}_mailhog"
     environment:
       VIRTUAL_HOST: ${PROJECT_DOMAIN}
+
+  drush:
+    image: drush/drush:9
+    container_name: "${PROJECT_NAME}_drush"
+    depends_on:
+      - php
+      - mariadb
+    volumes_from:
+    - php
 
   terminus:
     image: subhaze/terminus
