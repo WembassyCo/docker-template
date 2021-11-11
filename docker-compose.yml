@@ -1,0 +1,98 @@
+version: '3.7'
+
+services:
+  php:
+    image: wodby/drupal-php:${PHP_TAG}
+    container_name: "${PROJECT_NAME}_php"
+    environment:
+      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
+      DB_HOST: ${PROJECT_NAME}_mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PHP_MEMORY_LIMIT: 10G
+      PHP_MAX_FILE_UPLOADS: 10G
+      PHP_POST_MAX_SIZE: 10G
+      PHP_FPM_CLEAR_ENV: "no"
+    volumes:
+    - ${PROJECT_PATH}:/var/www/html:cached
+
+  mariadb:
+    image: wodby/mariadb:${MARIADB_TAG}
+    container_name: "${PROJECT_NAME}_mariadb"
+    stop_grace_period: 30s
+    environment:
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+    - ${DB_PATH}:/var/lib/mysql
+#   - ./mariadb-init:/docker-entrypoint-initdb.d # Place init .sql file(s) here.
+
+  solr:
+   image: wodby/solr:$SOLR_TAG
+   container_name: "${PROJECT_NAME}_solr"
+   environment:
+     VIRTUAL_HOST: ${SOLR_VHOST}
+     SOLR_DEFAULT_CONFIG_SET: $SOLR_CONFIG_SET
+     SOLR_HEAP: 1024m
+
+  crond:
+    image: wodby/drupal-php:$PHP_TAG
+    container_name: "${PROJECT_NAME}_crond"
+    environment:
+      CRONTAB: "0 * * * * drush -r /var/www/html/${DOCROOT} cron"
+    command: sudo -E LD_PRELOAD=/usr/lib/preloadable_libiconv.so crond -f -d 0
+    volumes:
+    - ${PROJECT_PATH}:/var/www/html:cached
+
+  apache:
+   image: wodby/apache:${APACHE_TAG}
+   container_name: "${PROJECT_NAME}_apache"
+   depends_on:
+     - php
+     - mariadb
+     - solr
+   ports:
+     - 80:80
+   environment:
+     PHP_MEMORY_LIMIT: 10G
+     PHP_MAX_FILE_UPLOADS: 10G
+     VIRTUAL_HOST: ${APACHE_VHOST}
+     APACHE_LOG_LEVEL: debug
+     APACHE_BACKEND_HOST: php
+     APACHE_VHOST_PRESET: php
+     APACHE_DOCUMENT_ROOT: /var/www/html${DOCROOT}
+     DB_HOST: ${PROJECT_NAME}_mariadb
+     DB_PORT: 3306
+     DB_USER: ${DB_USER}
+     DB_PASSWORD: ${DB_PASSWORD}
+   volumes:
+   - ${PROJECT_PATH}:/var/www/html:cached
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: "${PROJECT_NAME}_phpmyadmin"
+    restart: always
+    ports:
+      - 81:80
+    links:
+      - mariadb
+    environment:
+      VIRTUAL_HOST: ${PHPMYADMIN_VHOST}
+      PMA_HOST: ${PROJECT_NAME}_mariadb
+      PMA_USER: ${DB_USER}
+      PMA_PASSWORD: ${DB_PASSWORD}
+      PMA_ARBITRARY: 1
+
+  mailhog:
+    ports:
+      - 83:8025
+    image: mailhog/mailhog
+    container_name: "${PROJECT_NAME}_mailhog"
+    environment:
+      VIRTUAL_HOST: ${PROJECT_DOMAIN}
+
+  terminus:
+    image: subhaze/terminus
+    container_name: "${PROJECT_NAME}_terminus"
