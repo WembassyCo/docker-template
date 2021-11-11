@@ -1,0 +1,4 @@
+.env
+db/*
+aria_log_control
+aria_log.*
