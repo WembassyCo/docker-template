@@ -58,7 +58,7 @@ services:
      - mariadb
      - solr
    ports:
-     - 80:80
+     - ${DRUPAL_WEBSITE_PORT}:80
    environment:
      PHP_MEMORY_LIMIT: 10G
      PHP_MAX_FILE_UPLOADS: 10G
@@ -81,7 +81,7 @@ services:
     container_name: "${PROJECT_NAME}_phpmyadmin"
     restart: always
     ports:
-      - 81:80
+      - ${PHPMYADMIN_PORT}:80
     links:
       - mariadb
     environment:
@@ -96,7 +96,7 @@ services:
 
   mailhog:
     ports:
-      - 83:8025
+      - ${MAILLOG_PORT}:8025
     image: mailhog/mailhog
     container_name: "${PROJECT_NAME}_mailhog"
     environment:
