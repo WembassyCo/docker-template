@@ -53,3 +53,9 @@ docker exec ${PROJECT_NAME}_apache drush status
 You can also run terminus from the command line, terminus is often needed for Pantheon
 based projects.  There is a included bash command called terminus that will allow for this
 
+# First Time Running Docker Compose Up
+After docker-compose up has finished you will need to access phpMyAdmin container, and import
+a starter database for drupal.  Create the new database using the DB_NAME you chose or 
+use the default one named drupal. 
+
+Once this has been imported you can continue working on the site.
