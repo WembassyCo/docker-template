@@ -28,6 +28,7 @@ open or the server will be closed.
 For setting the database connection details for your drupal installation the settings.php or settings.local.php files 
 database connection should look like the following:
 
+```php
  $databases['default']['default'] = array (
     'database' => $envs['DB_NAME'] ?? 'mysql',
     'username' => $envs['DB_USER'] ?? 'root',
@@ -37,6 +38,7 @@ database connection should look like the following:
     'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
     'driver' => 'mysql',
   );
+```
 
 ## Accessing the Sites, these are default but can be chanced in the .env file
 - Drupal/Wordpress: localhost:81
