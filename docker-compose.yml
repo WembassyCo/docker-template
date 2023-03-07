@@ -17,6 +17,13 @@ services:
     volumes:
     - ${PROJECT_PATH}:/var/www/html:cached
 
+  composer_installation:
+    container_name: composer_installation
+    image: composer
+    volumes:
+      - ${PROJECT_ROOT_PATH}:/app
+    command: composer install --ignore-platform-reqs
+
   mariadb:
     image: wodby/mariadb:${MARIADB_TAG}
     container_name: "${PROJECT_NAME}_mariadb"
@@ -61,7 +68,6 @@ services:
      - ${DRUPAL_WEBSITE_PORT}:80
    environment:
      PHP_MEMORY_LIMIT: 10G
-     PHP_MAX_FILE_UPLOADS: 10G
      PHP_MAX_FILE_UPLOADS: 10G
      PHP_POST_MAX_SIZE: 10G
      VIRTUAL_HOST: ${APACHE_VHOST}
