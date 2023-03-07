@@ -41,9 +41,9 @@ database connection should look like the following:
 ```
 
 ## Accessing the Sites, these are default but can be chanced in the .env file
-- Drupal/Wordpress: localhost:81
-- PHPMyAdmin: localhost:82
-- Maillog: localhost:83
+- Drupal/Wordpress: localhost:82
+- PHPMyAdmin: localhost:83
+- Maillog: localhost:84
 
 # Using Drush with the project
 Use the included bash command, drush or manually use:
