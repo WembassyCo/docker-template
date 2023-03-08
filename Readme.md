@@ -59,3 +59,7 @@ a starter database for drupal.  Create the new database using the DB_NAME you ch
 use the default one named drupal. 
 
 Once this has been imported you can continue working on the site.
+
+# Notes for Windows 10+ users
+You may need to disable WSL-2 on windows, and instead use Hyper-V for virtualization as there are
+known issues around this for drupal on windows.
