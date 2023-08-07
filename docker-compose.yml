@@ -17,6 +17,13 @@ services:
     volumes:
     - ${PROJECT_PATH}:/var/www/html:cached
 
+  composer_installation:
+    container_name: composer_installation
+    image: composer
+    volumes:
+      - ${PROJECT_ROOT_PATH}:/app
+    command: composer install --ignore-platform-reqs
+
   mariadb:
     image: wodby/mariadb:${MARIADB_TAG}
     container_name: "${PROJECT_NAME}_mariadb"

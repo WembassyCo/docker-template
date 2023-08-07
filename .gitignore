@@ -1,4 +1,4 @@
 .env
-db/*
+db
 aria_log_control
 aria_log.*

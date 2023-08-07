@@ -24,10 +24,42 @@ docker-compose up
 Once it has completed you will see a log of the server, additionally you need to keep this window
 open or the server will be closed.
 
-## Accessing the Sites
-- Drupal/Wordpress: localhost:80
-- PHPMyAdmin: localhost:81
-- Maillog: localhost:82
+## Database Connection Details
+For setting the database connection details for your drupal installation the settings.php or settings.local.php files 
+database connection should look like the following:
 
+```php
+ $databases['default']['default'] = array (
+    'database' => $envs['DB_NAME'] ?? 'mysql',
+    'username' => $envs['DB_USER'] ?? 'root',
+    'password' => $envs['DB_PASSWORD'] ?? 'password',
+    'prefix' => '',
+    'host' => $envs['PROJECT_NAME'] ? $envs['PROJECT_NAME'] . '_mariadb' : 'localhost',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+    'driver' => 'mysql',
+  );
+```
+
+## Accessing the Sites, these are default but can be chanced in the .env file
+- Drupal/Wordpress: localhost:82
+- PHPMyAdmin: localhost:83
+- Maillog: localhost:84
+
+# Using Drush with the project
+Use the included bash command, drush or manually use:
+docker exec ${PROJECT_NAME}_apache drush status
+
+# Using Terminus with the project
 You can also run terminus from the command line, terminus is often needed for Pantheon
-based projects.  To do this run ./pantheon from this templates root folder.
+based projects.  There is a included bash command called terminus that will allow for this
+
+# First Time Running Docker Compose Up
+After docker-compose up has finished you will need to access phpMyAdmin container, and import
+a starter database for drupal.  Create the new database using the DB_NAME you chose or 
+use the default one named drupal. 
+
+Once this has been imported you can continue working on the site.
+
+# Notes for Windows 10+ users
+You may need to disable WSL-2 on windows, and instead use Hyper-V for virtualization as there are
+known issues around this for drupal on windows.
