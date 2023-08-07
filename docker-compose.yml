@@ -62,7 +62,6 @@ services:
    environment:
      PHP_MEMORY_LIMIT: 10G
      PHP_MAX_FILE_UPLOADS: 10G
-     PHP_MAX_FILE_UPLOADS: 10G
      PHP_POST_MAX_SIZE: 10G
      VIRTUAL_HOST: ${APACHE_VHOST}
      APACHE_LOG_LEVEL: debug
